@@ -1,0 +1,80 @@
+# Workflow Schema v1.0
+# ---------------------------------------------------------------------------
+# 工作流命令文件的 YAML frontmatter 必须符合本 Schema。
+# 正文按 Stage 组织，每个 Stage 是一个小节，字段与下方 stages[] 对应。
+# 校验器：scripts/validate_workflow.py
+# 规则：未知字段报 warning；必填缺失报 error；类型不符报 error。
+# ---------------------------------------------------------------------------
+
+workflow:
+  name:            # [必填] string, kebab-case, 与文件名 workflow-<domain>-<version>.md 一致
+  version:         # [必填] string, semver，如 "1.0.0"
+  domain:          # [必填] string, kebab-case 领域标识，如 "medical-education"
+  description:     # [必填] string, 一句话说明这份工作流产出什么，不超过 60 字
+
+  source_policy:   # [必填]
+    primary:       # [必填] string  事实骨架来源类型，如 "textbook" / "paper" / "standard"
+    secondary:     # [可选] string  仲裁来源类型，如 "clinical-guideline" / "regulation"
+                   #   无仲裁源时写 null；写 null 则不得出现 authority-arbitrate 阶段
+    scope:         # [可选] string  范围界定来源，如 "exam-syllabus" / "contract-scope"
+    anchor_required:  # [必填] boolean  是否要求每条实质性陈述附原文定位
+    conflict_policy:  # [必填] enum   primary 与 secondary 冲突时的处理方式
+                      #   side-by-side  并排呈现，不自动裁决（默认，推荐）
+                      #   primary-wins  以 primary 为准，secondary 作脚注
+                      #   secondary-wins 以 secondary 为准，标注 primary 差异
+                      #   任何情况下都不得静默抹平差异
+
+  human_gates:     # [可选] 闸门清单；声明了 authority-arbitrate 阶段时必填且需覆盖该阶段
+    - stage:       # [必填] string  闸门所在阶段名，必须存在于 stages 中
+      condition:   # [必填] string  触发闸门的可判定命题（不要写"检查质量"这类空话）
+      on_fail:     # [必填] enum    halt | warn | rollback
+                   #   halt     停止流程，等待人工处理（涉及实质后果时用这个）
+                   #   warn     记录警告后继续（仅限非实质项）
+                   #   rollback 回退到上一阶段重做
+      reviewer:    # [可选] string  核定人角色，如 "author" / "domain-expert"
+      evidence:    # [可选] string  闸门通过需留下的证据，如 "gate_decision.json"
+
+  outputs:         # [必填] 至少 1 项
+    - format:      # [必填] enum    pdf | markdown | docx | json | jsonl | png
+      template:    # [可选] string  模板路径或名称
+      destination: # [必填] string  输出目录（相对工作目录）
+
+stages:            # [必填] 按执行顺序排列，至少 2 个
+  - name:          # [必填] string  取自 stage-catalog，或在 extensions.custom_stages 中声明
+    description:   # [必填] string  该阶段在本任务中具体做什么
+    input:         # [必填] 至少 1 项
+      - name:      # [必填] string
+        type:      # [必填] enum   files | text | json | jsonl | decision | image
+        required:  # [必填] boolean
+        from:      # [可选] string 来源阶段名或外部输入标识，便于追溯
+    agent_actions: # [必填] 至少 1 条指令性语言，动词开头，可执行
+      - string
+    output:        # [必填] 至少 1 项
+      - name:      # [必填] string
+        type:      # [必填] enum   files | text | json | jsonl | decision | image
+        schema:    # [可选] string 指向 JSON Schema 或示例文件
+    human_gate:    # [必填] boolean  是否人工闸门；为 true 时必须在 workflow.human_gates 中出现
+    fallback:      # [必填] string  失败时的回退动作，不允许留空或写 "none"
+    references:    # [可选] string[] 指向 references/ 下详细指令文件的相对路径
+
+extensions:        # [可选]
+  custom_stages:   # 仅当 stage-catalog 没有合适原型时使用
+    - name:        # [必填] string
+      reason:      # [必填] string  为什么标准阶段不适用
+      contract:    # [可选] string  简述该自定义阶段的输入输出契约
+
+# ---------------------------------------------------------------------------
+# 校验规则（validate_workflow.py 实现）
+# E1  name 未通过 kebab-case 校验
+# E2  version 不是 semver
+# E3  stages 少于 2 个
+# E4  stage.name 既不在 stage-catalog 也未在 extensions.custom_stages 声明
+# E5  任一 stage 缺 input / output / agent_actions / fallback
+# E6  human_gate: true 的 stage 未出现在 workflow.human_gates 中
+# E7  存在 authority-arbitrate 阶段但 human_gates 未覆盖它
+# E8  source_policy.secondary 为 null 却出现 authority-arbitrate 阶段
+# E9  outputs 为空或 format 不在枚举内
+# W1  fallback 写成 none / 无 / - 之类无意义占位
+# W2  references 指向的文件不存在
+# W3  anchor_required 为 true 但 compose 阶段未要求附来源定位
+# ---------------------------------------------------------------------------
