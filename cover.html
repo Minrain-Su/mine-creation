@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>cover</title>
+<!--
+  封面：必须单独渲染（@page margin:0），再与正文 PDF 合并。
+  不要用 margin:-19mm 去抵消正文版心——会被页框裁掉（实测踩过）。
+  标题 46pt / 副题 14pt / 说明 10pt；装饰可用 SVG 心电图条。
+-->
+<style>
+  @page { size:210mm 297mm; margin:0; }
+  html,body{ width:210mm; height:297mm; margin:0; }
+  body{ background:#0e2740; overflow:hidden;
+        -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .frame{ position:absolute; left:11mm; top:11mm; width:188mm; height:275mm;
+          border:.9pt solid #c9a961; }
+  .frame::before{ content:""; position:absolute; left:2.2mm; top:2.2mm;
+          width:183.2mm; height:270.2mm; border:.3pt solid rgba(201,169,97,.42); }
+  .top{ position:absolute; left:22mm; top:30mm; font-size:8pt; letter-spacing:.5em;
+        color:#c9a961; font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  .tline{ position:absolute; left:22mm; top:37mm; width:26mm; height:1.3pt; background:#c9a961; }
+  .title{ position:absolute; left:20mm; top:76mm; font-size:46pt; font-weight:700;
+          letter-spacing:.1em; color:#f4efe3; line-height:1.1;
+          font-family:"Source Han Serif SC","Songti SC","SimSun",serif; }
+  .sub{ position:absolute; left:22mm; top:110mm; font-size:14pt; letter-spacing:.16em; color:#c9a961;
+        font-family:"Source Han Serif SC","Songti SC","SimSun",serif; }
+  .gline{ position:absolute; left:22mm; top:124mm; width:50mm; height:.7pt;
+          background:rgba(201,169,97,.7); }
+  .dek{ position:absolute; left:22mm; top:131mm; font-size:10pt; letter-spacing:.16em;
+        color:#b9c8d8; line-height:2.1; font-family:"Source Han Serif SC","Songti SC","SimSun",serif; }
+  .cap{ position:absolute; left:22mm; top:196mm; font-size:7.4pt; letter-spacing:.1em; color:#7d90a6; }
+  .epi{ position:absolute; left:22mm; top:216mm; }
+  .epi .q{ font-size:10.4pt; line-height:1.95; color:#a9bccd;
+           font-family:"Source Han Serif SC","Songti SC","SimSun",serif; }
+  .epi .src{ margin-top:1.6mm; font-size:7.4pt; letter-spacing:.12em; color:#8a6f3e;
+             font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  .bottom{ position:absolute; left:22mm; bottom:24mm; font-size:9pt; letter-spacing:.2em;
+           color:#c3d0dd; line-height:2.0;
+           font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  .bottom .lab{ color:#7d90a6; font-size:7.4pt; letter-spacing:.3em; }
+  .year{ position:absolute; right:22mm; bottom:24mm; font-size:9pt; letter-spacing:.24em;
+         color:#8fa4bb; font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+</style></head><body>
+<div class="frame"></div>
+<div class="top">{{SERIES_EN}}</div>
+<div class="tline"></div>
+
+<div class="title">{{TITLE}}</div>
+<div class="sub">{{SUBTITLE}}</div>
+<div class="gline"></div>
+<div class="dek">{{DECK_LINE_1}}<br>{{DECK_LINE_2}}</div>
+
+<!-- SVG 心电图条：坐标用毫米，clipPath 裁两端；path 必须写 <path d="..."> 才会渲染 -->
+<svg style="position:absolute;left:0;top:0;width:210mm;height:297mm" viewBox="0 0 210 297"
+     xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="band"><rect x="24" y="160" width="162" height="30"/></clipPath></defs>
+  <g clip-path="url(#band)">
+    <polyline fill="none" stroke="#c9a961" stroke-width="0.3" opacity=".5"
+      points="24,172 30,172.6 36,171.9 42,172.8 48,172.2 54,172.7 60,171.9 66,172.9 72,172.3 78,172.6"/>
+    <g fill="none" stroke="#e8dcc2" stroke-width="0.5" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M 38,172 L 38.8,173.1 L 39.4,163.4 L 40.1,174.0 L 40.9,172 Q 42.3,169.8 43.3,172 Q 44.4,172.9 45.4,172"/>
+      <path d="M 76,172 L 76.8,173.1 L 77.4,163.4 L 78.1,174.0 L 78.9,172 Q 80.3,169.8 81.3,172 Q 82.4,172.9 83.4,172"/>
+      <path d="M 114,172 L 114.8,173.1 L 115.4,163.4 L 116.1,174.0 L 116.9,172 Q 118.3,169.8 119.3,172 Q 120.4,172.9 121.4,172"/>
+      <path d="M 152,172 L 152.8,173.1 L 153.4,163.4 L 154.1,174.0 L 154.9,172 Q 156.3,169.8 157.3,172 Q 158.4,172.9 159.4,172"/>
+    </g>
+  </g>
+</svg>
+
+<div class="cap">{{FIG_CAPTION}}</div>
+<div class="epi">
+  <div class="q">{{THESIS_QUOTE}}</div>
+  <div class="src">{{THESIS_SOURCE}}</div>
+</div>
+<div class="bottom"><span class="lab">编　著</span><br>{{AUTHOR}}</div>
+<div class="year">{{YEAR}}</div>
+</body></html>

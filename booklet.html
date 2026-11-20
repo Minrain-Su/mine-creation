@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>{{TITLE}}</title>
+<!--
+  印刷版式骨架（body 篇）。
+  1) 把 :root 里的六个数值换成 plan.budget 的实测值；
+  2) 封面另存 cover.html，@page margin:0、210×297 满版，渲染后合并；
+  3) 引文两级：class="q"（干教材，深蓝）/ class="q zhi"（枝教材，金）；
+  4) 图：<figure><img style="width:XXmm">＋<figcaption>裁切自《书名》第N版 Pxxx 图x-x</figcaption></figure>
+  5) 串讲只用 <p class="lead">，楷体，1–2 句，不得夹带新事实。
+-->
+<style>
+  :root{
+    --body-size:9.9pt;  --body-line:1.72;
+    --quote-size:9.6pt; --quote-line:1.66;
+    --zhi-size:9.3pt;
+    --ink:#1b2229; --navy:#12304d; --gold:#a8761a; --gold-line:#c9a961;
+  }
+  @page { size:A4; margin:19mm 19mm 17mm; }   /* 与 budget.page.margin_mm 一致 */
+  *{ box-sizing:border-box; }
+  body{ margin:0; color:var(--ink); text-align:justify;
+        font-family:"Source Han Serif SC","Songti SC","SimSun",serif;
+        font-size:var(--body-size); line-height:var(--body-line);
+        -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+  /* ---------- 标题：只用名词短语 ---------- */
+  h1,h2,h3{ font-family:"Source Han Sans SC","Microsoft YaHei","SimHei",sans-serif; }
+  h2{ break-after:avoid; font-size:14.4pt; font-weight:700; color:var(--navy);
+      margin:6.2mm 0 2.8mm; padding-bottom:1.6mm; border-bottom:.9pt solid var(--navy); }
+  h2 .n{ color:var(--gold); margin-right:3mm; }
+  h3{ break-after:avoid; font-size:10.8pt; font-weight:700; color:var(--navy); margin:4mm 0 1.4mm; }
+
+  /* ---------- 引文：干 ---------- */
+  blockquote.q{ margin:1.8mm 0; padding:1.5mm 4mm 1.4mm 4.4mm; text-indent:2em;
+                border-left:2.4pt solid var(--navy); background:#f2f5f8;
+                font-size:var(--quote-size); line-height:var(--quote-line); break-inside:avoid; }
+  blockquote.q .src{ display:block; text-indent:0; text-align:right; margin-top:.9mm;
+                     font-size:7.9pt; color:#7b8896;
+                     font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  /* ---------- 引文：枝 ---------- */
+  blockquote.q.zhi{ border-left:2.4pt solid var(--gold-line); background:#fbf8f1;
+                    font-size:var(--zhi-size); }
+  blockquote.q.zhi .src{ color:#9a8459; }
+
+  /* ---------- 串讲（楷体，与原文在字形上分开） ---------- */
+  p.lead{ font-family:"KaiTi","STKaiti","SimSun",serif; font-size:var(--body-size);
+          line-height:1.68; color:#3c4a56; text-indent:2em; margin:0 0 1.4mm; }
+
+  /* ---------- 图 ---------- */
+  figure{ margin:2mm 0 2.4mm; padding-top:1.4mm; text-align:center; break-inside:avoid; }
+  figure img{ display:block; margin:0 auto; }
+  figcaption{ margin-top:1.5mm; font-size:7.9pt; line-height:1.55; color:#5d6b7a;
+              font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  figcaption b{ font-weight:400; color:#8c6b34; }
+
+
+  /* ---------- V2.0 铁律 3：三线表 ---------- */
+  table{ width:100%; border-collapse:collapse; margin:2.4mm 0 3mm; font-size:8.7pt;
+         line-height:1.5; break-inside:avoid; }
+  caption{ caption-side:top; text-align:left; font-size:8.2pt; color:#3d4d5c;
+           padding-bottom:1.2mm; font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  thead th{ border-top:1.2pt solid var(--navy); border-bottom:.7pt solid var(--navy);
+            background:none; color:var(--navy); font-weight:700; font-size:8.4pt;
+            padding:1.4mm 2mm; text-align:left;
+            font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  td{ border:0; border-bottom:.3pt solid #d5dde4; padding:1.3mm 2mm; vertical-align:top; }
+  tbody tr:last-child td{ border-bottom:1.2pt solid var(--navy); }
+
+  /* ---------- V2.0 铁律 3：箭头流程 ---------- */
+  .flow{ display:flex; flex-wrap:wrap; align-items:center; gap:1.6mm; margin:2.6mm 0 3mm;
+         padding:2.4mm 3mm; background:#f6f8fa; border-left:2.4pt solid var(--navy);
+         break-inside:avoid; font-size:8.8pt; line-height:1.5; text-indent:0;
+         font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+  .flow .node{ padding:.8mm 2mm; border:.5pt solid #c3cdd6; background:#fff; }
+  .flow .ar{ color:var(--gold); font-weight:700; }
+
+  /* ---------- V2.0 铁律 4：【药理交叉】 ---------- */
+  .pharm{ border:.7pt solid #c9a961; background:#fdfaf3; margin:2.6mm 0 3mm;
+          padding:2.2mm 3mm 2.4mm; break-inside:avoid; text-indent:0; font-size:8.8pt; }
+  .pharm .hd{ font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; font-size:8.6pt;
+              font-weight:700; color:#8c6b34; letter-spacing:.06em; margin-bottom:1.4mm; }
+  .pharm table{ margin:0; font-size:8.3pt; }
+  .pharm thead th{ border-top:0; color:#8c6b34; }
+  .pharm tbody tr:last-child td{ border-bottom:0; }
+
+  /* ---------- 闸门 / 收束 ---------- */
+  .gate{ border:1pt dashed var(--gold); background:#fffaf0; padding:2.4mm 4mm;
+         margin:3.4mm 0 0; font-size:8.9pt; line-height:1.66; text-indent:0; break-inside:avoid; }
+  .gate .hd{ font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; font-size:8.5pt;
+             font-weight:700; color:#8c1d18; margin-bottom:1mm; }
+  .line{ margin:4.2mm 0 0; padding:2.4mm 2mm; text-align:center; text-indent:0;
+         border-top:1pt solid var(--navy); border-bottom:1pt solid var(--navy);
+         font-size:9pt; line-height:1.72;
+         font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; break-inside:avoid; }
+  .colo{ margin:14mm auto 0; width:146mm; text-align:center; text-indent:0;
+         font-size:8pt; line-height:1.75; color:#8b95a1;
+         font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+
+  /* ---------- 页首凡例（可选：说明干支配色） ---------- */
+  .note{ font-size:8.4pt; line-height:1.6; color:#6d7b89; text-indent:0;
+         margin:0 0 2.6mm; padding-bottom:1.6mm; border-bottom:.4pt dotted #c3cdd6;
+         font-family:"Source Han Sans SC","Microsoft YaHei",sans-serif; }
+</style></head>
+<body>
+
+<p class="note">凡例　蓝色引文出自《{{PRIMARY}}》（干）；金色引文出自{{BRANCH_LIST}}（枝）。引文一律加引号并注页码。</p>
+
+<h2><span class="n">一</span>{{H1}}</h2>
+
+<blockquote class="q">“{{TRUNK_QUOTE_1}}”
+<span class="src">——引用于《{{PRIMARY}}》第{{ED}}版 P{{PAGE}}</span></blockquote>
+
+<blockquote class="q zhi">“{{BRANCH_QUOTE_1}}”
+<span class="src">——引用于《{{BRANCH_BOOK}}》第{{ED}}版 P{{PAGE}}</span></blockquote>
+
+<p class="lead">{{BRIDGE_SENTENCE}}</p>
+
+<figure>
+  <img src="{{IMG_PATH}}" style="width:{{IMG_W}}mm">
+  <figcaption>图 1　{{FIG_TITLE}}　<b>裁切自</b>《{{BOOK}}》第{{ED}}版 P{{PAGE}} 图{{FIG_NO}}</figcaption>
+</figure>
+
+
+<!-- ===== V2.0 铁律 3 示例：评分系统必须成表 ===== -->
+<table>
+  <caption>表 1　CHA₂DS₂-VASc 评分条目（依《内科学》第10版 P202 原文整理）</caption>
+  <thead><tr><th>条目</th><th>分值</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>{{ITEM}}</td><td>{{SCORE}}</td><td>{{NOTE}}</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== V2.0 铁律 3 示例：治疗流程必须成箭头 ===== -->
+<div class="flow">
+  <span class="node">{{STEP_1}}</span><span class="ar">→</span>
+  <span class="node">{{STEP_2}}</span><span class="ar">→</span>
+  <span class="node">{{STEP_3}}</span>
+</div>
+
+<!-- ===== V2.0 铁律 4 示例：药理交叉三栏 ===== -->
+<div class="pharm">
+  <div class="hd">【药理交叉】{{DRUG}}</div>
+  <table>
+    <thead><tr><th>微观靶点</th><th>中间结果</th><th>宏观结果</th></tr></thead>
+    <tbody>
+      <tr><td>{{TARGET}}</td><td>{{MECHANISM}}</td><td>{{OUTCOME}}</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2><span class="n">二</span>{{H2}}</h2>
+<blockquote class="q">“{{TRUNK_QUOTE_2}}”
+<span class="src">——引用于《{{PRIMARY}}》第{{ED}}版 P{{PAGE}}</span></blockquote>
+
+<div class="gate">
+  <div class="hd">【指南待核】下列阈值引自教材，用前请核对现行指南原文</div>
+  <ol>
+    <li>{{GATE_1}}</li>
+    <li>{{GATE_2}}</li>
+  </ol>
+</div>
+
+<div class="line">{{ONE_LINE_SUMMARY}}</div>
+
+<div class="colo">本册引文 {{N}} 条，出自{{SOURCE_LIST}}；图 1—{{FN}} 按原书页码裁切，图注注明书名、版次与图号。</div>
+
+</body></html>
